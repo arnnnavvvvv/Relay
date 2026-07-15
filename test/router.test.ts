@@ -1,6 +1,6 @@
-// Unit tests for selectProvider: config-based provider selection and fallback behavior.
+// Unit tests for orderProviders: config-based provider ordering and fallback behavior.
 import { describe, it, expect } from "vitest";
-import { selectProvider } from "../src/router/index.js";
+import { orderProviders } from "../src/router/index.js";
 import type { ProviderAdapter, NormalizedRequest } from "../src/types/index.js";
 
 function fakeProvider(name: string): ProviderAdapter {
@@ -20,23 +20,29 @@ function fakeProvider(name: string): ProviderAdapter {
 
 const request: NormalizedRequest = { messages: [{ role: "user", content: "hi" }], modelHint: "capable" };
 
-describe("selectProvider", () => {
-  it("returns the first provider when no default is configured", () => {
+describe("orderProviders", () => {
+  it("keeps original order when no default is configured", () => {
     const providers = [fakeProvider("openai"), fakeProvider("groq")];
-    expect(selectProvider(providers, request).name).toBe("openai");
+    expect(orderProviders(providers, request).map((p) => p.name)).toEqual(["openai", "groq"]);
   });
 
-  it("returns the provider matching defaultProvider when configured", () => {
+  it("moves the default provider to the front when configured", () => {
     const providers = [fakeProvider("openai"), fakeProvider("groq")];
-    expect(selectProvider(providers, request, { defaultProvider: "groq" }).name).toBe("groq");
+    expect(orderProviders(providers, request, { defaultProvider: "groq" }).map((p) => p.name)).toEqual([
+      "groq",
+      "openai",
+    ]);
   });
 
-  it("falls back to the first provider when defaultProvider doesn't match any adapter", () => {
+  it("keeps original order when defaultProvider doesn't match any adapter", () => {
     const providers = [fakeProvider("openai"), fakeProvider("groq")];
-    expect(selectProvider(providers, request, { defaultProvider: "anthropic" }).name).toBe("openai");
+    expect(orderProviders(providers, request, { defaultProvider: "anthropic" }).map((p) => p.name)).toEqual([
+      "openai",
+      "groq",
+    ]);
   });
 
   it("throws when no providers are configured", () => {
-    expect(() => selectProvider([], request)).toThrow();
+    expect(() => orderProviders([], request)).toThrow();
   });
 });

@@ -1,19 +1,23 @@
-// Pluggable routing policy: picks which provider adapter serves a request. Currently config-based, not smart — a placeholder for pattern-mined routing later (AGENT.md §7).
+// Pluggable routing policy: orders provider adapters by preference for a request. Currently config-based, not smart — a placeholder for pattern-mined routing later (AGENT.md §7).
 import type { NormalizedRequest, ProviderAdapter } from "../types/index.js";
 
 export interface RouterConfig {
   defaultProvider?: string;
 }
 
-// Selects a provider by configured name, falling back to the first available adapter.
-export function selectProvider(
+// Orders providers with the configured default first (if present), then the rest in their original order.
+export function orderProviders(
   providers: ProviderAdapter[],
   _request: NormalizedRequest,
   config: RouterConfig = {}
-): ProviderAdapter {
+): ProviderAdapter[] {
   if (providers.length === 0) {
     throw new Error("no provider adapters configured");
   }
-  const preferred = providers.find((p) => p.name === config.defaultProvider);
-  return preferred ?? providers[0];
+  const preferredIndex = providers.findIndex((p) => p.name === config.defaultProvider);
+  if (preferredIndex <= 0) {
+    return providers;
+  }
+  const preferred = providers[preferredIndex];
+  return [preferred, ...providers.slice(0, preferredIndex), ...providers.slice(preferredIndex + 1)];
 }
