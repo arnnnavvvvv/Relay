@@ -1,4 +1,4 @@
-// Redis-backed CircuitBreakerStore: the real, durable state store used in production (Redis holds ephemeral fast-moving state per AGENT.md §3).
+// Redis-backed CircuitBreakerStore: the real state store used in production, since circuit breaker state is ephemeral and fast-moving.
 import type { RedisClientType } from "redis";
 import type { CircuitBreakerStore } from "./store.js";
 

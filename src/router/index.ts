@@ -1,4 +1,4 @@
-// Pluggable routing policy: orders provider adapters by preference for a request. Currently config-based, not smart — a placeholder for pattern-mined routing later (AGENT.md §7).
+// Pluggable routing policy: orders provider adapters by preference for a request. Currently config-based, not smart — a placeholder for a data-driven routing policy later.
 import type { NormalizedRequest, ProviderAdapter } from "../types/index.js";
 
 export interface RouterConfig {
