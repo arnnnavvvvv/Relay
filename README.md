@@ -128,6 +128,6 @@ CI (`.github/workflows/ci.yml`) runs typecheck, build, and the full test suite o
 - **Structured observability** — a stable per-request log schema (latency, tokens, cache hit/miss, route chosen, circuit state) feeding Postgres and Langfuse.
 - **Load testing** — real p50/p95/p99 latency numbers and measured cost/call reduction from caching, under a realistic query distribution.
 
-## Tech stack
+## Tech Stack
 
 TypeScript, Express, Redis, PostgreSQL + pgvector (planned), Docker, Vitest, GitHub Actions.
